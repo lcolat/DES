@@ -9,6 +9,7 @@ def main():
     print(len(cleD))
     print(cleD)
     i = 0
+    dict = recupConstantesDES()
     for i in range(0, 63) :
         if i != 7 and i != 15 and i != 23 and i != 31 and i != 39 and i != 47 and i != 55:
             cleF = cleF + cleD[i]
