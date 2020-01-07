@@ -34,3 +34,41 @@ def getG(arr) :
     for i in range(0, 28) :
         g = g + arr[i]
     return g
+
+def decallage(d) :
+    t = d[0]
+    d = d.replace(t, '', 1) + t
+    return d
+
+def K1(g, d, dict) :
+    k = g + d
+    arr =[]
+    for i in range(0, 48) :
+        arr.append(k[dict['CP_2'][0][i]])
+    k = ""
+    for i in range(0, 48):
+        k = k + arr[int(i)]
+    return k
+
+def mComplet(m):
+    while len(m) < 128 :
+        m = m +"0"
+    return m
+
+def getGPaquetage(m) :
+    d = ""
+    for i in range (0,64) :
+        d = d + m[i]
+    return d
+
+def getDPaquetage(m) :
+    d = ""
+    for i in range (64,128) :
+        d = d + m[i]
+    return d
+
+def permutInit(g, dict) :
+    k = ""
+    for i in range(0, 64):
+        k = k + g[dict['PI'][0][i]]
+    return k
