@@ -1,28 +1,13 @@
 from Extract_ConstantesDES import recupConstantesDES
+from functions import *
 
 def main():
-    fichier = open("TP-DES\Messages\Clef_de_1.txt", "r")
-    cleD = fichier.readline()
-    fichier.close()
+    cleD = getCle()
     cleD = "0101111001011011010100100111111101010001000110101011110010010001"
-    cleF = ""
-    print(len(cleD))
-    print(cleD)
-    i = 0
+    cleF = getFinalCle(cleD)
     dict = recupConstantesDES()
-    arr = []
-    arr2 = []
-    for i in range(0, 63) :
-        if i != 7 and i != 15 and i != 23 and i != 31 and i != 39 and i != 47 and i != 55:
-            cleF = cleF + cleD[i]
-    for i in range (0,63) :
-        arr.append(cleD[i])
-    for i in dict['PI'][0] :
-        arr2.append(cleD[dict['PI'][0][i]])
-    print(cleF)
-    print(arr)
-    print (arr2)
-    print(dict['PI'])
-    print(cleD[dict['PI'][0][0]])
-    print(cleD[57])
+    arr = CLEF(cleD)
+    arr2 = CP1(cleD, dict)
+    g = getG(arr2)
+    d = getD(arr2)
 main()
