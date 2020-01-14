@@ -1,3 +1,4 @@
+from functions import *
 #####################################################
 #		   	 	DICTIONNAIRE BINAIRE 64				#
 #####################################################
@@ -102,6 +103,18 @@ def nib_vnoc(txt):
 
 	return res
 
+def getCle():
+    fichier = open("TP-DES\Messages\Clef_de_2.txt", "r")
+    cleD = fichier.readline()
+    fichier.close()
+    return cleD
 
+
+def getLecture():
+    fichier = open("TP-DES\Messages\Chiffrement_DES_de_2.txt", "r")
+    message = fichier.readlines()
+    fichier.close()
+    return message
 # Test
-txt0 = "Je teste au stérone !? ^_^ et on agrandit encore plus pour que le test passe bien donc on parle beaucoup pour riendire, comme d'hab en spmme"
+txt0 = getLecture()
+txt1 = getLecture()

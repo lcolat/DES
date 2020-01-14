@@ -1,12 +1,6 @@
 from ConvAlphaBin import *
 from Extract_ConstantesDES import recupConstantesDES
 
-def getCle():
-    fichier = open("TP-DES\Messages\Clef_de_1.txt", "r")
-    cleD = fichier.readline()
-    fichier.close()
-    return cleD
-
 def getFinalCle(cleD):
     cleF =""
     for i in range(0, 63) :
@@ -59,23 +53,25 @@ def mComplet(m):
     j = 0
     for i in range (0,len(m)):
         t = t + m[i]
-        if len(t) == 128:
+        if len(t) == 64:
             arr.append(t)
             t = ""
             j = j + 1
-    while len(arr[j-1]) < 128:
-        arr[j-1] = arr[j-1] + "0"
+    if len(t) > 0 :
+        arr.append(t)
+        while len(arr[j]) < 64:
+            arr[j] = arr[j] + "0"
     return arr
 
 def getGPaquetage(m) :
     d = ""
-    for i in range (0,64) :
+    for i in range (0,32) :
         d = d + m[i]
     return d
 
 def getDPaquetage(m) :
     d = ""
-    for i in range (64,128) :
+    for i in range (32,64) :
         d = d + m[i]
     return d
 
@@ -156,7 +152,6 @@ def permutInitI(g, dict) :
 
 def cryptage():
     cleD = getCle()
-    cleD = "0101111001011011010100100111111101010001000110101011110010010001"
     cleF = getFinalCle(cleD)
     dict = recupConstantesDES()
     arr = CLEF(cleD)
@@ -166,54 +161,88 @@ def cryptage():
     t=""
     g = getG(arr2)
     d = getD(arr2)
+    cleR = g + d
     arrk = []
     for i in range(0, 16):
         g = decallage(g)
         d = decallage(d)
         k = K1(g ,d, dict)
         arrk.append(k)
-    m = conv_bin(txt0)
+    m = conv_bin("Bonjour")
     arrm = []
     arrm = mComplet(m)
     for n in arrm:
+        n = permutInit(n, dict)
         g = getGPaquetage(n)
         d = getDPaquetage(n)
-        g = permutInit(g, dict)
-        d = permutInit(d, dict)
-
-
         for i in range(0, 16):
-            gg = getGRonde(g)
-            gd = getDRonde(g)
-            dg = getGRonde(d)
-            dd = getDRonde(d)
 
-            transg = gd
-            transd = dd
+            transg = d
 
-            gd = expantion(gd, dict)
-            dd = expantion(dd, dict)
+            d = expantion(d, dict)
 
-            gd = ouAvecCle(gd, arrk[i])
-            dd = ouAvecCle(dd, arrk[i])
+            d = ouAvecCle(d, arrk[i])
 
-            gd = decoupe(gd, dict)
-            dd = decoupe(dd, dict)
+            d = decoupe(d, dict)
 
-            gd = permutRonde(gd, dict)
-            dd = permutRonde(dd, dict)
+            d = permutRonde(d, dict)
 
 
-            gd = dernierOu(gg, gd)
-            gg = transg
-            dd = dernierOu(dg, dd)
-            dg = transd
+            d = dernierOu(g, d)
+            g = transg
 
 
-            g = gg + gd
-            d = gd + dd
+            g = g+d
         g = permutInitI(g, dict)
-        d = permutInitI(d, dict)
-        t = t + g + d
+        t = t + g
+        arr =[t, cleD]
     print("texte crypté : " + t)
-    print("clef de décryptage : " + cleF)
+    print("clef de décryptage : " + cleD)
+    return arr
+
+
+def decryptage(t, cleF):
+    print("t : " + t)
+    print("cleF : " + cleF)
+    dict = recupConstantesDES()
+    arr2 = CP1(cleF, dict)
+    transg = ""
+    transd = ""
+
+    g = getG(arr2)
+    d = getD(arr2)
+    arrk = []
+    for i in range(0, 16):
+        g = decallage(g)
+        d = decallage(d)
+        k = K1(g, d, dict)
+        arrk.append(k)
+    arrm = mComplet(t)
+    t = ""
+    for n in arrm:
+        n = permutInit(n, dict)
+        g = getGPaquetage(n)
+        d = getDPaquetage(n)
+
+        for i in range(15, -1, -1):
+
+            transg = g
+
+            g = expantion(g, dict)
+
+            g = ouAvecCle(g, arrk[i])
+
+            g = decoupe(g, dict)
+
+            g = permutRonde(g, dict)
+
+
+            g = dernierOu(d, g)
+            d = transg
+
+
+            g = g+d
+        g = permutInitI(g, dict)
+        t = t + g
+    print("text decrypte binaire : " + t)
+    print("texte decrypte : " + nib_vnoc(t))
